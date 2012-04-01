@@ -11,28 +11,19 @@ if /i "%VS100COMNTOOLS%"=="" (
    goto :eof
 )
 
-set REGEDIT=regedit
-if exist "%SystemRoot%\SysWOW64\regedit.exe" set REGEDIT=%SystemRoot%\SysWOW64\regedit.exe
-
-
 echo Deploying XUnitForVS TIP to VS Directory
+rem echo - %VSINSTALLDIR%\Common7\IDE\PrivateAssemblies
+rem copy /y "%~dp0\PrivateAssemblies\*.dll" "%VSINSTALLDIR%\Common7\IDE\PrivateAssemblies"
 echo - %VS100COMNTOOLS%\..\IDE\PrivateAssemblies
 copy /y "%~dp0\PrivateAssemblies\xunit.runner.visualstudio.vs2010.dll" "%VS100COMNTOOLS%\..\IDE\PrivateAssemblies"
 copy /y "%~dp0\..\Imports\xunit.runner.utility.dll" "%VS100COMNTOOLS%\..\IDE\PrivateAssemblies"
 
-
-echo Deploying Project Item Template to VS Directory
-echo - %VS100COMNTOOLS%\..\IDE\ItemTemplates\CSharp\1033
-xcopy /r /y /i "%~dp0\VSTemplates\*.zip" "%VS100COMNTOOLS%\..\IDE\ItemTemplates\CSharp\1033"
-
+set REGEDIT=regedit
+if exist "%SystemRoot%\SysWOW64\regedit.exe" set REGEDIT=%SystemRoot%\SysWOW64\regedit.exe
 
 echo Registering Package
 "%~dp0\xunit.runner.visualstudio.vs2010.vsix"
 "%REGEDIT%" /s "%~dp0\xunit.runner.visualstudio.vs2010.reg"
 
-echo Registering Visual Studio Templates
-devenv /setup /installvstemplates
-
-
-echo Visual Studio is now capable of opening and executing XUnit tests.
+echo XUnitForVS plugin modules updated.
 pause

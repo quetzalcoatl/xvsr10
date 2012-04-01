@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
     <Identifier Id="e61ac2cc-7cb8-44ac-80ea-bb90122f759f">
-        <Name>XUnit Test for VS</Name>
-        <Author>EX</Author>
-        <Version>1.2</Version>
-        <Description xml:space="preserve">Integrates xUnit.NET tests into MSTest.</Description>
+        <Name>xUnit Test Runner for VisualStudio 2010</Name>
+        <Author>quetzalcoatl</Author>
+        <Version>2.0</Version>
+        <Description xml:space="preserve">Enables to run xUnit-based unit tests from within VisualStudio's builtin test runner.</Description>
         <Locale>1033</Locale>
         <InstalledByMsi>false</InstalledByMsi>
         <SupportedProducts>

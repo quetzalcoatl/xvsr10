@@ -1,0 +1,3 @@
+The xunit.runner.utility.dll is NOT original, but the file name must match.
+This file is already hotfixed against bug mentioned at http://xunit.codeplex.com/workitem/9780
+The xUnit VS Test Runner MAY MALFUNCTION if the xunit.runner.utility.dll has that bug on the loose.

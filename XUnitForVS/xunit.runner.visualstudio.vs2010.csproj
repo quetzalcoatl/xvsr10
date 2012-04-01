@@ -9,8 +9,8 @@
     <ProjectGuid>{FD90417A-8636-4135-87F9-C1A5F710DA61}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XUnitForVS</RootNamespace>
-    <AssemblyName>XUnitForVS</AssemblyName>
+    <RootNamespace>Xunit.Runner.VisualStudio.VS2010</RootNamespace>
+    <AssemblyName>xunit.runner.visualstudio.vs2010</AssemblyName>
     <StartupObject>
     </StartupObject>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -58,9 +58,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\VSSDK\Microsoft.VsSDK.targets" />
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestType\XUnitTestResultViewWindow.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="TestType\InternalAccess.cs" />
     <Compile Include="TestType\XUnitTest.cs" />
     <Compile Include="TestType\XUnitTestAdapter.cs" />
     <Compile Include="TestType\Guard.cs" />
@@ -68,9 +66,6 @@
     <Compile Include="Package\ResourceIds.cs" />
     <Compile Include="TestType\XUnitTestRunner.cs" />
     <Compile Include="TestType\XUnitTestTip.cs" />
-    <Compile Include="TestType\XUnitTestTuip.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Package\VSPackage.resx">
@@ -114,10 +109,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
-    <Reference Include="xunit.runner.utility, Version=1.6.40.111, Culture=neutral, PublicKeyToken=d880cd708ff00f90, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="xunit.runner.utility">
       <HintPath>..\Imports\xunit.runner.utility.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -145,15 +138,20 @@
     <None Include="ProjectItems\XUnitTest.cs">
       <SubType>Code</SubType>
     </None>
+    <None Include="ProjectItems\XUnitTest.zip" />
     <None Include="source.extension.vsixmanifest" />
   </ItemGroup>
   <ItemGroup>
     <VSTemplate Include="ProjectItems\XUnitTest.vstemplate" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy /y "$(TargetDir)$(TargetName).vsix" "$(SolutionDir)Exports"
-copy /y "$(TargetDir)X*.dll" "$(SolutionDir)Exports\PrivateAssemblies"
-copy /y "$(ProjectDir)ProjectItems\*.zip" "$(SolutionDir)Exports\VSTemplates"
+    <PostBuildEvent>copy /y "$(TargetDir)$(TargetName).vsix" "$(ProjectDir)\..\Exports"
+copy /y "$(TargetDir)X*.dll" "$(ProjectDir)\..\Exports\PrivateAssemblies"
+copy /y "$(TargetDir)X*.pdb" "$(ProjectDir)\..\Exports\PrivateAssemblies"
+xcopy /y "$(ProjectDir)ProjectItems\*.zip" "$(ProjectDir)\..\Exports\VSTemplates"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Icon Package="{BA1248C1-49F2-4899-9A2C-548035755F2C}" ID="104"/>
-    <Name Package="{BA1248C1-49F2-4899-9A2C-548035755F2C}" ID="108"/>
+    <Icon Package="{EC512710-795B-47E9-A0FF-050CF6E2EF0D}" ID="104"/>
+    <Name Package="{EC512710-795B-47E9-A0FF-050CF6E2EF0D}" ID="108"/>
     <Description>Creates a test class with an example unit test.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>80</SortOrder>
