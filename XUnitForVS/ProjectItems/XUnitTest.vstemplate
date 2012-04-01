@@ -1,0 +1,17 @@
+﻿<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Icon Package="{BA1248C1-49F2-4899-9A2C-548035755F2C}" ID="104"/>
+    <Name Package="{BA1248C1-49F2-4899-9A2C-548035755F2C}" ID="108"/>
+    <Description>Creates a test class with an example unit test.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>80</SortOrder>
+    <DefaultName>TargetType</DefaultName>
+    <TemplateGroupID>TestProject-V1</TemplateGroupID>
+    <TemplateID>TestProject-V1-XUnitTest</TemplateID>
+    <CustomDataSignature>TestProject-V1</CustomDataSignature>
+    <ShowByDefault>false</ShowByDefault>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem TargetFileName="Test$fileinputname$.cs" ReplaceParameters="true">XUnitTest.cs</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

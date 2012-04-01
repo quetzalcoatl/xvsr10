@@ -1,0 +1,62 @@
+xvsr10 is a codename for xUnit.net test runner package for VisualStudio 2010.
+
+It was originally created by EmperorXLII and published as a work item
+under http://xunit.codeplex.com/workitem/5648, however the xUnit team
+was not able to mantain nor support it, as they put their effort into
+their own runner for VisualStudio 2011.
+
+This repository hosts the original work of EmperorXLII, it's added as
+the first revision. It was then upgraded to integrate more seamlessly
+with the VS2010 environment.
+
+Please note, that this project REQUIRES a patched version of Executor
+Wrapper class normally included in xunit.utility.runner.dll, as the
+current (2012-04-01, no joke) version contains a bug that interferes
+with VisualStudio message transporting services. A patch against this
+bug was posted to the xUnit (http://xunit.codeplex.com/workitem/9780)
+and awaits attention:) Until it is incorporated (if ever), you have
+to either patch it yourself, or use the version supplied in "imports"
+
+Moreover, most notes of the original author are still applicable:
+
+1)
+> To be clear, this is BETA QUALITY at best. It is able to run all
+> xUnit Fact and Theory tests, display results just like MSUnit
+> data-driven tests, and is compatible with VS's Code Coverage feature
+> (and likely others).
+
+2)
+> There are some caveats (below). If these are acceptable, feel free
+> to use the extension or code as you see fit. The extension can be
+> installed by running the install.bat file in the Exports directory.
+
+3)
+> Please see the NUnitForVS page for how to update existing projects
+> to show up as test projects in VS (the ProjectTypeGuids section).
+
+4)
+> Known issues:
+> - Methods in a class must have a unique name (i.e. you cannot have
+> multiple Theory methods with the same name but different arguments).
+
+Briefly, the process of updating projects mentioned in (3) is:
+
+> Add a following tag in the first <PropertyGroup> tag in the .csproj,
+> you may also edit existing 'ProjectTypeGuids' element and insert
+> those keys there. Remember to reload/reopen the projects afterwards.
+> C#
+>     <ProjectTypeGuids>
+>         {3AC096D0-A1C2-E12C-1390-A8335801FDAB};
+>         {FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}
+>     </ProjectTypeGuids>
+> Visual Basic version:
+>     <ProjectTypeGuids>
+>         {3AC096D0-A1C2-E12C-1390-A8335801FDAB};
+>         {F184B08F-C81C-45F6-A57F-5ABD9991F28F}
+>     </ProjectTypeGuids>
+
+Please also note that the GUIDs identifying the original version
+are mostly taken from some SDK sample projects, and in the later
+commits they have been changed. Please uninstall any old versions of
+this package before installing current one.
+
