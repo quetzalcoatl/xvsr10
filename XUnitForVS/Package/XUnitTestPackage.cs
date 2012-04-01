@@ -1,5 +1,4 @@
 using System;
-//using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
@@ -25,8 +24,6 @@ namespace Xunit.Runner.VisualStudio.VS2010
     [DefaultRegistryRoot(@"Software\Microsoft\VisualStudio\10.0")]
     [ProvideLoadKey("Professional", "2.0", "xUnit test runner for VS2010", "quetzalcoatl", (short)ResourceIds.TestPackageLoadKey)]
     [RegisterTestTypeNoEditor(typeof(XUnitDummyTest), typeof(XUnitTestTip), new string[] { ".dll", ".exe" }, new int[] { (int)ResourceIds.TestIcon, (int)ResourceIds.TestIcon }, (int)ResourceIds.TestName)]
-    // [ProvideServiceForTestType(typeof(XUnitDummyTest), typeof(SXUnitTestService))]
-    // [ProvideToolWindow(typeof(XUnitTestResultViewWindow), Orientation = ToolWindowOrientation.Left, Style = VsDockStyle.MDI)]
     public sealed class XUnitTestPackage : Package
     {
         /// <summary>
@@ -34,14 +31,6 @@ namespace Xunit.Runner.VisualStudio.VS2010
         /// </summary>
         public XUnitTestPackage()
         {
-            //ServiceCreatorCallback callback = new ServiceCreatorCallback(this.OnCreateService);
-            //IServiceContainer container = GetService(typeof(IServiceContainer)) as IServiceContainer;
-
-            //Debug.Assert(container != null, "Package didn't provide IServiceContainer so we cannot provide services");
-
-            //if (container != null)
-            //    container.AddService(typeof(SXUnitTestService), callback, true); // For every TUIP, add its service here.
-
             m_package = this;
         }
 
@@ -49,23 +38,5 @@ namespace Xunit.Runner.VisualStudio.VS2010
         /// The Instance of the package that allows other classess to access the packages services
         /// </value>
         public static XUnitTestPackage Instance { get { Debug.Assert(m_package != null, "Package needs to be created before Instance is called."); return m_package; } } private static XUnitTestPackage m_package;
-
-        /// <summary>
-        ///// Callback from IServiceContainer to demand create our services.
-        ///// </summary>
-        ///// <param name="container">service container</param>
-        ///// <param name="serviceType">type of service</param>
-        ///// <returns>the service provider object</returns>
-        //private object OnCreateService(IServiceContainer container, Type serviceType)
-        //{
-        //    Guard.ParameterNotNull(container, "container");
-        //    Guard.ParameterNotNull(serviceType, "serviceType");
-
-        //    //Hint: return your service from here
-        //    if (serviceType == typeof(SXUnitTestService)) return new XUnitTestTuip(this);
-
-        //    Debug.Fail("service container requested unsupported service: " + serviceType.FullName);
-        //    return null;
-        //}
     }
 }

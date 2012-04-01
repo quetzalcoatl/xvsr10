@@ -1,10 +1,8 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-//using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-//using System.Xml;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Common.Xml;
 
@@ -96,25 +94,6 @@ namespace Xunit.Runner.VisualStudio.VS2010
         public static readonly Type testmethodType;
         public static readonly Func<string, string, MSVST4U_TestMethod> CreateTestMethod;
 
-        //public static readonly Type shelpType;
-        //public static readonly Func<SerializationInfo, int, object> CreateSerializationHelper; - not needed, the custom TestElement has been refactored out
-        //public static readonly Action<object> SH_BeginDeserialization;
-        //public static readonly Func<object, string> SH_GetString;
-        //public static readonly Func<object, Type, object, object> SH_GetField;
-        //public static readonly Action<object> SH_EndDeserialization;
-        //public static readonly Action<object> SH_BeginSerialization;
-        //public static readonly Action<object, string> SH_AddString;
-        //public static readonly Action<object, object, object, Type> SH_AddField;
-        //public static readonly Action<object> SH_EndSerialization;
-
-        //public static readonly Type xpersType;
-        //public static readonly Func<object> CreateXmlPersistence; - not needed, the custom TestElement has been refactored out
-        //public static readonly Action<XmlElement, object, Type, XmlTestStoreParameters> XP_LoadUsingReflection;
-        //public static readonly Func<object, XmlElement, string, Type, object, object> XP_LoadSimpleField;
-        //public static readonly Func<object, XmlElement, string, XmlTestStoreParameters, Type, object> XP_LoadIXmlTestStore;
-        //public static readonly Action<object, XmlElement, string, object, object> XP_SaveSimpleField;
-        //public static readonly Action<object, object, XmlElement, string, XmlTestStoreParameters> XP_SaveObject;
-
         static MSVST4U_Tunnels()
         {
             try
@@ -152,35 +131,6 @@ namespace Xunit.Runner.VisualStudio.VS2010
                     
                     InitNewLambda(out CreateTestMethod, testmethodType, typeof(string), typeof(string)); // name classname
                 }
-                //{
-                //    const string HelpersTypeAssembly = "Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-                //    const string SHelpTypeName = "Microsoft.VisualStudio.TestTools.Common.SerializationHelper";
-                //    const string XPersTypeName = "Microsoft.VisualStudio.TestTools.Common.Xml.XmlPersistence";
-                //    shelpType = Type.GetType(SHelpTypeName + ", " + HelpersTypeAssembly, throwOnError: true, ignoreCase: true);
-                //    xpersType = Type.GetType(XPersTypeName + ", " + HelpersTypeAssembly, throwOnError: true, ignoreCase: true);
-
-                //    InitNewLambda(out CreateSerializationHelper, shelpType, typeof(SerializationInfo), typeof(int));
-
-                //    InitCallLambda(out SH_BeginDeserialization, shelpType.GetMethod("BeginDeserialization", BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null));
-                //    InitCallLambda(out SH_GetString, shelpType.GetMethod("GetString", BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null));
-                //    InitCallLambda(out SH_GetField, shelpType.GetMethod("GetField", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(Type), typeof(object) }, null), typeof(Type), typeof(object));
-                //    InitCallLambda(out SH_EndDeserialization, shelpType.GetMethod("EndDeserialization", BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null));
-
-                //    InitCallLambda(out SH_BeginSerialization, shelpType.GetMethod("BeginSerialization", BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null));
-                //    InitCallLambda(out SH_AddString, shelpType.GetMethod("AddString", BindingFlags.Instance | BindingFlags.Public, null, new[] { typeof(string) }, null), typeof(string));
-                //    InitCallLambda(out SH_AddField, shelpType.GetMethod("AddField", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(object), typeof(object), typeof(Type) }, null), typeof(object), typeof(object), typeof(Type));
-                //    InitCallLambda(out SH_EndSerialization, shelpType.GetMethod("EndSerialization", BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null));
-
-                //    InitNewLambda(out CreateXmlPersistence, xpersType);
-
-                //    InitSCallLambda(out XP_LoadUsingReflection, xpersType.GetMethod("LoadUsingReflection", BindingFlags.Static | BindingFlags.NonPublic, null, new[] { typeof(XmlElement), typeof(object), typeof(Type), typeof(XmlTestStoreParameters) }, null), typeof(XmlElement), typeof(object), typeof(Type), typeof(XmlTestStoreParameters));
-
-                //    InitCallLambda(out XP_LoadSimpleField, xpersType.GetMethod("LoadSimpleField", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(XmlElement), typeof(string), typeof(Type), typeof(object) }, null), typeof(XmlElement), typeof(string), typeof(Type), typeof(object));
-                //    InitCallLambda(out XP_LoadIXmlTestStore, xpersType.GetMethod("LoadIXmlTestStore", BindingFlags.Instance | BindingFlags.Public, null, new[] { typeof(XmlElement), typeof(string), typeof(XmlTestStoreParameters), typeof(Type) }, null), typeof(XmlElement), typeof(string), typeof(XmlTestStoreParameters), typeof(Type));
-
-                //    InitCallLambda(out XP_SaveSimpleField, xpersType.GetMethod("SaveSimpleField", BindingFlags.Instance | BindingFlags.Public, null, new[] { typeof(XmlElement), typeof(string), typeof(object), typeof(object) }, null), typeof(XmlElement), typeof(string), typeof(object), typeof(object));
-                //    InitCallLambda(out XP_SaveObject, xpersType.GetMethod("SaveObject", BindingFlags.Instance | BindingFlags.Public, null, new[] { typeof(object), typeof(XmlElement), typeof(string), typeof(XmlTestStoreParameters) }, null), typeof(object), typeof(XmlElement), typeof(string), typeof(XmlTestStoreParameters));
-                //}
             }
             catch (Exception ex)
             {

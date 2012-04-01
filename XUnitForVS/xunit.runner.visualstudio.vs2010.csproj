@@ -144,9 +144,6 @@
   <ItemGroup>
     <VSTemplate Include="ProjectItems\XUnitTest.vstemplate" />
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(TargetDir)$(TargetName).vsix" "$(ProjectDir)\..\Exports"
 copy /y "$(TargetDir)X*.dll" "$(ProjectDir)\..\Exports\PrivateAssemblies"
