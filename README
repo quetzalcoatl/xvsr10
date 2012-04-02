@@ -9,13 +9,41 @@ This repository hosts the original work of EmperorXLII, it's added as
 the first revision. It was then upgraded to integrate more seamlessly
 with the VS2010 environment.
 
-Please note, that this project REQUIRES a patched version of Executor
-Wrapper class normally included in xunit.utility.runner.dll, as the
-current (2012-04-01, no joke) version contains a bug that interferes
-with VisualStudio message transporting services. A patch against this
-bug was posted to the xUnit (http://xunit.codeplex.com/workitem/9780)
-and awaits attention:) Until it is incorporated (if ever), you have
-to either patch it yourself, or use the version supplied in "imports"
+New features:
+- now supports RunFromContext and similar VS commands,
+- supports jumping back and forth between code and tests,
+- provides data for many more columns in the standard test views.
+
+Please remember to upgrade your .csproj files that contain your tests!
+The description of this is at the very bottom of this document.
+
+
+If by chance you are interested in the gory details of the changes:
+    http://quetzalcoatl-pl.blogspot.com/search/label/xvsr10
+but beware, I sometimes happen to commit a *long* writing.
+
+
+-----------
+If you have installed a 1.0 or 1.2 versions that EmperorXLII have
+originally posted at xUnit's issue board, please uninstall them.
+The GUIDs identifying the original version were mostly taken from
+SDK sample projects, and in the current code they have been changed.
+I don't really know what would happen, but I sense that having two
+versions installed the same time is not a good idea.
+
+
+If you have never installed it, please read the instructions below:
+
+
+-----------
+Installation is mostly manual, similar to as it was before:
+- download the plugin, at least the Exports directory
+- if you want to have everything, run install.bat
+- if you don't need the "xUnit test" template, run update.bat instead
+
+The 'update' just replaces the binaries, it leaves the item templates
+intact, what saves a lot of time as the evil /setup /installtemplates
+is not run.
 
 Moreover, most notes of the original author are still applicable:
 
@@ -27,8 +55,7 @@ Moreover, most notes of the original author are still applicable:
 
 2)
 > There are some caveats (below). If these are acceptable, feel free
-> to use the extension or code as you see fit. The extension can be
-> installed by running the install.bat file in the Exports directory.
+> to use the extension or code as you see fit.
 
 3)
 > Please see the NUnitForVS page for how to update existing projects
@@ -39,6 +66,29 @@ Moreover, most notes of the original author are still applicable:
 > - Methods in a class must have a unique name (i.e. you cannot have
 > multiple Theory methods with the same name but different arguments).
 
+
+-----------
+Please note, that this project still requires a hot fixed version
+of ExecutorWrapper class. This time it is completely known why, and
+it is because the current (2012-04-01, no joke) version of it contains
+a bug that interferes with Visual Studio message transporting services.
+A patch against this bug was recently posted to the xUnit issue board
+(http://xunit.codeplex.com/workitem/9780) and awaits attention:)
+
+Until it is incorporated (if ever), you have to either patch it yourself,
+or simply let the 'installer' to use the version supplied in "imports".
+
+The patch to the class does not affect neither the xunit.dll nor the
+xunit.extensions.dll, so you may freely use whatever version you have.
+The only file affected by the bug is xunit.utility.runner.dll. It is
+shipped with the xUnit libraries, but usually you don't use it. The
+xUnit GUI and Console runners use it internally and xVSR10 isn't
+different. If you have your own custom version of this assembly for
+some specific reason, please check whether you should patch it too.
+In no other cases you should have to worry about that. xVSR10 may
+use the patched one, while all other programs use the standard one.
+
+-----------
 Briefly, the process of updating projects mentioned in (3) is:
 
 > Add a following tag in the first <PropertyGroup> tag in the .csproj,
@@ -54,9 +104,3 @@ Briefly, the process of updating projects mentioned in (3) is:
 >         {3AC096D0-A1C2-E12C-1390-A8335801FDAB};
 >         {F184B08F-C81C-45F6-A57F-5ABD9991F28F}
 >     </ProjectTypeGuids>
-
-Please also note that the GUIDs identifying the original version
-are mostly taken from some SDK sample projects, and in the later
-commits they have been changed. Please uninstall any old versions of
-this package before installing current one.
-
