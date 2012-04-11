@@ -1,0 +1,136 @@
+﻿<Window x:Class="xunit.runner.visualstudio.vs2010.autoinstaller.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sc="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+        Title="XVSR10 Module Manager"
+        SizeToContent="Height" Width="595" Name="UACBounceWindow"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        FocusManager.FocusedElement="{Binding ElementName=btnUpdate}"
+        Closing="Window_Closing">
+    
+    <Window.Resources>
+        <BitmapImage x:Key="biOk" UriSource="Resources/ok.png" />
+        <BitmapImage x:Key="biWr" UriSource="Resources/warn.png" />
+        <BitmapImage x:Key="biEr" UriSource="Resources/error.png" />
+        <BitmapImage x:Key="biFx" UriSource="Resources/fix.png" />
+        <BitmapImage x:Key="biWt" UriSource="Resources/wait.png" />
+        <sc:BooleanToVisibilityConverter x:Key="visbool" />
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="5,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock TextWrapping="Wrap">
+                    This utility allows to quickly install or uninstall the extension modules
+                    required for the Visual Studio Quality Tools to be able to execute
+                    xUnit tests and understand their results.
+                </TextBlock>
+                
+                <ToggleButton Name="btnInfo" Grid.Column="1" Padding="5,0" VerticalAlignment="Center"
+                              Content="?" HorizontalAlignment="Right" />
+            </Grid>
+                
+            <TextBlock Margin="10,5,10,0" TextWrapping="Wrap" TextAlignment="Justify"
+                       Visibility="{Binding IsChecked, ElementName=btnInfo,Converter={StaticResource visbool}}">
+                    Without those modules, the Visual Studio will be (at most) able to find and list
+                    the tests, but running them may be unavailable. The worker processes of 'QTAgent'
+                    family search for startup modules only on a very strict, hardly extensible set
+                    of paths. Therefore, it is the easiest to register the modules globally in GAC,
+                    but this is undesirable in some setups. The second option is to copy them to a
+                    place bound to the some specific Visual Studio installation like PrivateAssemblies
+                    directory.
+            </TextBlock>
+
+            <TextBlock Margin="0,10,0,5" TextWrapping="Wrap">
+                    The only small problem is, that all possible installation locations usually
+                    reside in "Program Files" or similar path protected by UAC.
+            </TextBlock>
+            <TextBlock TextAlignment="Center" TextDecorations="underline" FontWeight="Black">
+                This is the only cause this program asked for administrative access.
+            </TextBlock>
+            <TextBlock TextAlignment="Center">
+                You can find this tool in the VisualStudio menu: <Run FontWeight="Bold" >Test -> xUnit Runner manager</Run>
+            </TextBlock>
+            <TextBlock TextAlignment="Center" Margin="0,5,0,0" TextWrapping="Wrap">
+                <Run FontWeight="Bold">"File is in use"</Run> error? -> kill QTAgent and retry. Sometimes, restart VisualStudio.
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="VisualStudio instance:" Margin="5,0"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Current QTAgent cfg:" Margin="5,0" />
+
+            <Image Grid.Row="0" Grid.Column="1" x:Name="imgVS" Source="{StaticResource biWt}"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Margin="5,0" FontWeight="Bold" TextTrimming="CharacterEllipsis">
+                <Hyperlink x:Name="hpVSClicky" RequestNavigate="hpClicky_RequestNavigate">
+                    <Run x:Name="txVSClicky" />
+                </Hyperlink>
+            </TextBlock>
+
+            <Image Grid.Row="1" Grid.Column="1" x:Name="imgAgent" Source="{StaticResource biWt}"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txAgent" Margin="5,0" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+        </Grid>
+
+        <ListBox Grid.Row="2" x:Name="lbItems" 
+                 Grid.IsSharedSizeScope="True">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="3,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="c0" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="c2" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="c3" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="c4" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Margin="5,0" Text="{Binding AssemblyVersion}" />
+                        <TextBlock Grid.Column="1" Margin="5,0" Text="{Binding AssemblyShortName}" />
+                        <TextBlock Grid.Column="2" Margin="5,0" Text="{Binding CurrentState}" />
+
+                        <Image Grid.Column="3" Margin="3,3" Width="16" Height="16"
+                               Stretch="Uniform" Source="{Binding CurrentStateMark, FallbackValue={StaticResource biWt}}" />
+
+                        <ComboBox Grid.Column="4" Margin="5,0"
+                                  ItemsSource="{Binding NextStates}"
+                                  SelectedItem="{Binding NewState, Mode=TwoWay}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Padding="15,5" Margin="5,0" Content="All: Uninstall" x:Name="btnMAUninstall" Click="btnMarkAllUninstall_Click" />
+            <Button Padding="15,5" Margin="5,0,15,0" Content="All: Default" x:Name="btnMADefault" Click="btnMarkAllDefault_Click" />
+            <Button Padding="15,5" Margin="15,0" Content="Update" x:Name="btnUpdate" Click="btnUpdate_Click" />
+            <Button Padding="15,5" Margin="15,0" Content="Close" x:Name="btnClose" Click="btnClose_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

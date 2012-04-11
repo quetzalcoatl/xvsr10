@@ -1,0 +1,15 @@
+*.suo
+*.user
+*.cache
+*~
+*.swp
+bin
+Bin
+obj
+Obj
+dist
+Dist
+var
+Var
+--*
+

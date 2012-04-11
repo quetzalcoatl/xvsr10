@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
+  <Extern href="stdidcmd.h"/>
+
+  <!--This header contains the command ids for the menus provided by the shell. -->
+  <Extern href="vsshlids.h"/> <!-- https://github.com/nikhilk/scriptsharp/blob/master/tools/bin/VsSDK/vsshlids.h -->
+
+  <!--Definition of some VSCT specific constants. In this sample we use it for the IDs inside the guidOfficeIcon group. -->
+  <Extern href="msobtnid.h"/>
+
+  <!--Defines VK_INSERT -->
+  <Extern href="virtkeys.h"/>
+  
+  <Commands package="guidPackageKey">
+    <Groups>
+      
+      <Group guid="guidIDETestTools" id="grpTools" priority="0x0600">
+        <Parent guid="VS_guidTestTools" id="VS_menuTest" />
+      </Group>
+
+      <Group guid="guidProjectTools" id="grpProject" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+      </Group>
+    
+    </Groups>
+    
+    <!--Buttons section. -->
+    <Buttons>
+
+      <Button guid="guidIDETestTools" id="cmdRunModuleManager" priority="0x0100" type="Button">
+        <Parent guid="guidIDETestTools" id="grpTools" />
+        <Strings>
+          <CommandName>cmdRunModuleManager</CommandName>
+          <ButtonText>xUnit Runner manager</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidIDETestTools" id="cmdTerminateAgent" priority="0x0100" type="Button">
+        <Parent guid="guidIDETestTools" id="grpTools" />
+        <Strings>
+          <CommandName>cmdTerminateAgent</CommandName>
+          <ButtonText>Shutdown QTAgent</ButtonText>
+        </Strings>
+      </Button>
+      
+      <Button guid="guidProjectTools" id="cmdOpenProjectTypeEditor" priority="0x0100" type="Button">
+        <Parent guid="guidProjectTools" id="grpProject" />
+        <CommandFlag>TextOnly</CommandFlag>
+        <CommandFlag>DontCache</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+       <Strings>
+          <CommandName>cmdOpenProjectTypeEditor</CommandName>
+          <ButtonText>Enable UnitTest extension</ButtonText>
+        </Strings>
+      </Button>
+
+    </Buttons>
+  
+  </Commands>
+
+  <Symbols>
+
+    <GuidSymbol name="guidPackageKey" value="{EC512710-795B-47E9-A0FF-050CF6E2EF0D}" />
+
+    <GuidSymbol name="guidIDETestTools" value="{7E495D98-0A46-4802-BD8F-952B4E12D40B}">
+      <IDSymbol name="grpTools" value="0x1001" />
+      <IDSymbol name="cmdRunModuleManager" value="0x0100" />
+      <IDSymbol name="cmdTerminateAgent" value="0x0101" />
+    </GuidSymbol>
+
+    <GuidSymbol name="guidProjectTools" value="{106645C8-ED0B-40FE-9BF9-8DA4EF20ED0E}">
+      <IDSymbol name="grpProject" value="0x1001" />
+      <IDSymbol name="cmdOpenProjectTypeEditor" value="0x0100" />
+    </GuidSymbol>
+
+    <GuidSymbol name="VS_guidTestTools" value="{B85579AA-8BE0-4C4F-A850-90902B317571}">
+      <IDSymbol name="VS_menuTest" value="0x1001" />
+      <IDSymbol name="VS_toolbarTestResults" value="0x1301" />
+      <IDSymbol name="VS_toolbarTestViews" value="0x1306" />
+    </GuidSymbol>
+
+  </Symbols>
+
+</CommandTable>

@@ -1,5 +1,7 @@
 xvsr10 is a codename for xUnit.net test runner package for VisualStudio 2010.
 
+BACKGROUND
+
 It was originally created by EmperorXLII and published as a work item
 under http://xunit.codeplex.com/workitem/5648, however the xUnit team
 was not able to mantain nor support it, as they put their effort into
@@ -9,15 +11,9 @@ This repository hosts the original work of EmperorXLII, it's added as
 the first revision. It was then upgraded to integrate more seamlessly
 with the VS2010 environment.
 
-Please note, that this project REQUIRES a patched version of Executor
-Wrapper class normally included in xunit.utility.runner.dll, as the
-current (2012-04-01, no joke) version contains a bug that interferes
-with VisualStudio message transporting services. A patch against this
-bug was posted to the xUnit (http://xunit.codeplex.com/workitem/9780)
-and awaits attention:) Until it is incorporated (if ever), you have
-to either patch it yourself, or use the version supplied in "imports"
+NOTES for v2.1
 
-Moreover, most notes of the original author are still applicable:
+Most notes of the original author are still applicable:
 
 1)
 > To be clear, this is BETA QUALITY at best. It is able to run all
@@ -30,33 +26,74 @@ Moreover, most notes of the original author are still applicable:
 > to use the extension or code as you see fit. The extension can be
 > installed by running the install.bat file in the Exports directory.
 
-3)
-> Please see the NUnitForVS page for how to update existing projects
-> to show up as test projects in VS (the ProjectTypeGuids section).
+3) [obsolete note, see below]
 
 4)
 > Known issues:
 > - Methods in a class must have a unique name (i.e. you cannot have
 > multiple Theory methods with the same name but different arguments).
 
-Briefly, the process of updating projects mentioned in (3) is:
+INSTALLATION
 
-> Add a following tag in the first <PropertyGroup> tag in the .csproj,
-> you may also edit existing 'ProjectTypeGuids' element and insert
-> those keys there. Remember to reload/reopen the projects afterwards.
-> C#
->     <ProjectTypeGuids>
->         {3AC096D0-A1C2-E12C-1390-A8335801FDAB};
->         {FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}
->     </ProjectTypeGuids>
-> Visual Basic version:
->     <ProjectTypeGuids>
->         {3AC096D0-A1C2-E12C-1390-A8335801FDAB};
->         {F184B08F-C81C-45F6-A57F-5ABD9991F28F}
->     </ProjectTypeGuids>
+All the fuss about .bat, .reg and similar files is now gone!
 
-Please also note that the GUIDs identifying the original version
-are mostly taken from some SDK sample projects, and in the later
-commits they have been changed. Please uninstall any old versions of
-this package before installing current one.
+Just download the package and install by double-clicking the VSIX file.
+On the first run, the runner will probably show a message asking you to
+complete the installation. Confirm it, accept the UAC propmpt if any,
+and install the correct patches using the utility that will show up.
+It should be as easy as clicking two buttons ('update' then 'close').
 
+REQUIREMENTS:
+
+Of course, a xUnit library is needed. You dont have to install it in
+any special place. Just "Add reference" to it and write tests as usual,
+and the runner will have no problems with finding it when needed. 
+
+HOWEVER:
+
+Please note, that this project REQUIRES a patched version of Executor
+Wrapper class normally included in xunit.utility.runner.dll, as the
+current (2012-04-01, no joke) version contains a bug that interferes
+with VisualStudio message transporting services. A patch against this
+bug was posted to the xUnit (http://xunit.codeplex.com/workitem/9780)
+and awaits attention:) Until it is incorporated (if ever), you have
+to either patch it yourself, or use the version supplied in "imports"
+
+NOTES ON USAGE:
+
+Remember that tests ideally should reside in a separate project, of the
+'Test Project' type. The default reasoning is that the test code should
+not clutter the original module. This xUnit runner is built upon builtin
+test runner and it adheres to that rule: you will not see item templates
+nor all the handy buttons/toolbars/commands unless the tests are in some
+'Test Project'. Simply add a new project of that type to the solution,
+move your tests there and have fun.
+
+If for some reason you really don't want to create a separate project
+for keeping and running the tests, you can DESIGNATE ANY normal project
+to be also a test project: right click on it in the Solution Explorer
+and choose "Enable test extensions" (xvsr10 bonus thingy). You may have
+to unload and reload the project afterwards. After doing so, that project
+should be recognized as a test project and the runner should work properly
+with tests from it. If you have clicked it and then changed your mind,
+simply "Disable test extensions" in a similar way.
+
+Another addon you may find useful is 'Shutdown QTAgent' from Tests main
+menu. It can be irritating that the runner currently does not support
+stopping and pausing tests, especially if you manage somehow to deadlock
+or starve the test process. You can simply kill the QTAgent with TaskManager,
+but I find that 'Shutdown QTAgent' option quicker and more handy.
+
+UNINSTALLATION:
+
+Uninstalling via Extension Manager is NOT ENOUGH. If you are going to
+uninstall the runner, then FIRST use the 'xUnit runner manager' from
+'Tests' menu and uninstall all patches (three clicks: "all:uninstall",
+'update' then 'close'), and only then uninstall the runner extension.
+
+If you happen to accidentially 'just uninstall' from the extension
+manager - do not worry. It is safe to leave the tiny junk behind, it
+should not interfere with anything. In case you want to fix/tidy it:
+- you may reinstall the VSIX and use the 'xUnit runner manager' properly
+- or, you may go to Common7/IDE/PrivateAssemblies in your VisualStudio
+installation and delete the xunit runner's directory by hand.
