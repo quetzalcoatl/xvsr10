@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 //[assembly: CLSCompliant(false)] // copied from vs package samples
 //[assembly: NeutralResourcesLanguage("en-US")] // copied from vs package samples
 
-[assembly: AssemblyVersion("2.1.1.1")]
-[assembly: AssemblyFileVersion("2.1.1.1")]
+[assembly: AssemblyVersion("2.1.1.2")]
+[assembly: AssemblyFileVersion("2.1.1.2")]
