@@ -146,8 +146,14 @@ namespace Xunit.Runner.VisualStudio.VS2010
 
         private void tapAgentProcess()
         {
-            var tmi = MSVST3M_Access.GetTmi(this);
-            MSVST3M_Access.ShutdownLocalAgent(tmi);
+            Microsoft.VisualStudio.TestTools.Common.ITmi tmi = null;
+            try { tmi = MSVST3M_Access.GetTmi(this); }
+            catch (Exception ex) { System.Windows.MessageBox.Show("Failed to fetch TMI instance.\n" + ex.Message + "\n" + ex.StackTrace); }
+
+            if (tmi == null) return;
+
+            try { MSVST3M_Access.ShutdownLocalAgent(tmi); }
+            catch (Exception ex) { System.Windows.MessageBox.Show("Failed to kill the agent.\n" + ex.Message + "\n" + ex.StackTrace); }
         }
 
         //---------------------------------
