@@ -26,12 +26,14 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
 
         private string devenvroot;
         private string agentexename;
+        private readonly string mstestexename = "mstest.exe";
         private string[] assPaths;
 
         private bool vsPathCorrect;
         private AssemblyOptions referrer;
         private IEnumerable<AssemblyOptions> items;
-        private IDictionary<Assembly, KeyValuePair<bool, bool>> configState;
+        private IDictionary<Assembly, KeyValuePair<bool, bool>> qtaConfigState, mstConfigState;
+        private bool mstestState;
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -82,11 +84,16 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             referrer = allasms.First();
             items = allasms.Skip(1);
 
-            configState = ExeConfigPatcher.CheckQTConfigState(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
+            qtaConfigState = ExeConfigPatcher.CheckExeConfigState(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
+            mstConfigState = ExeConfigPatcher.CheckExeConfigState(devenvroot, mstestexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
+            mstestState = RegistryPatcher.CheckHklmTestTypesState();
 
             imgVS.Source = imgs[vsPathCorrect ? 0 : 2];
             txAgent.Text = agentexename + ".config";
-            UpdateConfigMark(3, 0);
+            txMstest.Text = mstestexename + ".config";
+            UpdateConfig1Mark(3, 0);
+            UpdateConfig2Mark(3, 0);
+            UpdateConfig3Mark(3, 0);
             hpVSClicky.NavigateUri = new Uri(devenvroot, UriKind.Absolute);
             txVSClicky.Text = devenvroot;
 
@@ -149,17 +156,27 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             }
         }
 
-        public void UpdateConfigMark(int needs, int not)
+        public void UpdateConfig1Mark(int needs, int not)
         {
             if (items != null)
-                imgAgent.Source = imgs[checkAgentCfgNeedsFixing() ? needs : not];
+                imgAgent.Source = imgs[checkCfgNeedsFixing(qtaConfigState, items) ? needs : not];
+        }
+        public void UpdateConfig2Mark(int needs, int not)
+        {
+            if (items != null)
+                imgMstest.Source = imgs[checkCfgNeedsFixing(mstConfigState, items) ? needs : not];
+        }
+        public void UpdateConfig3Mark(int needs, int not)
+        {
+            bool should = qtaConfigState.Values.Any(v => v.Value) || mstConfigState.Values.Any(v => v.Value);
+            imgMstest2.Source = imgs[mstestState != should ? needs : not];
         }
 
-        private bool checkAgentCfgNeedsFixing()
+        private static bool checkCfgNeedsFixing(IDictionary<Assembly, KeyValuePair<bool, bool>> cfg, IEnumerable<AssemblyOptions> filestates)
         {
-            foreach (var ass in items)
+            foreach (var ass in filestates)
             {
-                var state = configState[ass.assembly];
+                var state = cfg[ass.assembly];
                 bool shouldbe = ass.NewState == InstallOption.PrivateAssemblies || ass.NewState == InstallOption.NoAction && ass.CurrentState == InstallState.PrivateAssemblies;
                 if (state.Key || state.Value != shouldbe) return true;
             }
@@ -183,8 +200,10 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
                 else
                     item.NewState = InstallOption.NoAction;
 
-            UpdateConfigMark(3, 0);
-        }
+            UpdateConfig1Mark(3, 0);
+            UpdateConfig2Mark(3, 0);
+            UpdateConfig3Mark(3, 0);
+       }
 
         private void btnMarkAllDefault_Click(object sender, RoutedEventArgs e)
         {
@@ -194,12 +213,14 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
                 else
                     item.NewState = InstallOption.NoAction;
 
-            UpdateConfigMark(3, 0);
+            UpdateConfig1Mark(3, 0);
+            UpdateConfig2Mark(3, 0);
+            UpdateConfig3Mark(3, 0);
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            bool anything = checkAgentCfgNeedsFixing();
+            bool anything = checkCfgNeedsFixing(qtaConfigState, items) || checkCfgNeedsFixing(mstConfigState, items);
 
             foreach (var item in items.Where(it => it.NewState != InstallOption.NoAction))
             {
@@ -264,21 +285,54 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
                 {
                     try
                     {
-                        ExeConfigPatcher.PerformQTConfigPatches(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir,
+                        ExeConfigPatcher.PerformExeConfigPatches(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir,
                             items.ToDictionary(it => it.assembly, it => new KeyValuePair<bool, bool?>(
                                 true,
                                 it.CurrentState == InstallState.PrivateAssemblies
                         )));
 
-                        configState = ExeConfigPatcher.CheckQTConfigState(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
+                        qtaConfigState = ExeConfigPatcher.CheckExeConfigState(devenvroot, agentexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
 
-                        UpdateConfigMark(1, 0);
+                        UpdateConfig1Mark(1, 0);
                     }
                     catch (Exception ex)
                     {
                         imgAgent.Source = imgs[2];
                         MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+
+                    try
+                    {
+                        ExeConfigPatcher.PerformExeConfigPatches(devenvroot, mstestexename, AssemblyInstaller.VSPrivateSubDir,
+                            items.ToDictionary(it => it.assembly, it => new KeyValuePair<bool, bool?>(
+                                true,
+                                it.CurrentState == InstallState.PrivateAssemblies
+                        )));
+
+                        mstConfigState = ExeConfigPatcher.CheckExeConfigState(devenvroot, mstestexename, AssemblyInstaller.VSPrivateSubDir, items.Select(it => it.assembly).ToArray());
+
+                        UpdateConfig2Mark(1, 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        imgMstest.Source = imgs[2];
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    try
+                    {
+                        RegistryPatcher.PerformHklmTestTypesPatches();
+
+                        mstestState = RegistryPatcher.CheckHklmTestTypesState();
+
+                        UpdateConfig3Mark(3, 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        imgMstest2.Source = imgs[2];
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
                     btnUpdate.IsEnabled = true;
                     btnClose.IsEnabled = true;
                 }));
@@ -309,7 +363,8 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
         private bool ensureCloseUnstable()
         {
             var anythingLeft = items == null // null trick: if closed too fast, before init finishes, simply delay the user a bit
-                || checkAgentCfgNeedsFixing()
+                || checkCfgNeedsFixing(qtaConfigState, items)
+                || checkCfgNeedsFixing(mstConfigState, items)
                 || items.Any(it =>
                     it.CurrentState == InstallState.Uninstalled
                     || it.CurrentState == InstallState.NotFound

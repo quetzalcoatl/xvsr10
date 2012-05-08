@@ -58,7 +58,8 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             if (self.NewState == InstallOption.NoAction)
                 self.CurrentStateMark = MainWindow.CurrentStateImg(self.CurrentState, self.main.imgs);
 
-            self.main.UpdateConfigMark(3, 0);
+            self.main.UpdateConfig1Mark(3, 0);
+            self.main.UpdateConfig2Mark(3, 0);
         }
 
         private static void newStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -72,7 +73,8 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             else
                 self.CurrentStateMark = self.main.imgs[3];
 
-            self.main.UpdateConfigMark(3, 0);
+            self.main.UpdateConfig1Mark(3, 0);
+            self.main.UpdateConfig2Mark(3, 0);
         }
     }
 }

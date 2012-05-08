@@ -72,6 +72,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -81,6 +83,8 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="VisualStudio instance:" Margin="5,0"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Current QTAgent cfg:" Margin="5,0" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Current MSTest cfg:" Margin="5,0" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="MSTest registry patch:" Margin="5,0" />
 
             <Image Grid.Row="0" Grid.Column="1" x:Name="imgVS" Source="{StaticResource biWt}"/>
             <TextBlock Grid.Row="0" Grid.Column="2" Margin="5,0" FontWeight="Bold" TextTrimming="CharacterEllipsis">
@@ -91,6 +95,11 @@
 
             <Image Grid.Row="1" Grid.Column="1" x:Name="imgAgent" Source="{StaticResource biWt}"/>
             <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txAgent" Margin="5,0" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+
+            <Image Grid.Row="2" Grid.Column="1" x:Name="imgMstest" Source="{StaticResource biWt}"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="txMstest" Margin="5,0" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+
+            <Image Grid.Row="3" Grid.Column="1" x:Name="imgMstest2" Source="{StaticResource biWt}"/>
         </Grid>
 
         <ListBox Grid.Row="2" x:Name="lbItems" 

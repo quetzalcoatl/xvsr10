@@ -8,7 +8,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
 {
     public static class ExeConfigPatcher
     {
-        public static IDictionary<Assembly, KeyValuePair<bool, bool>> CheckQTConfigState(string devenvroot, string agentExecutable, string subpath, Assembly[] asms)
+        public static IDictionary<Assembly, KeyValuePair<bool, bool>> CheckExeConfigState(string devenvroot, string agentExecutable, string subpath, Assembly[] asms)
         {
             var agentConfigFile = Path.Combine(devenvroot, agentExecutable + ".config");
             string ns = "urn:schemas-microsoft-com:asm.v1";
@@ -31,8 +31,8 @@ namespace xunit.runner.visualstudio.vs2010.installer
             }
             return result;
         }
-        
-        public static void PerformQTConfigPatches(string devenvroot, string agentExecutable, string subpath, IDictionary<Assembly, KeyValuePair<bool, bool?>> actions)
+
+        public static void PerformExeConfigPatches(string devenvroot, string agentExecutable, string subpath, IDictionary<Assembly, KeyValuePair<bool, bool?>> actions)
         {
             var agentConfigFile = Path.Combine(devenvroot, agentExecutable + ".config");
             string ns = "urn:schemas-microsoft-com:asm.v1";
@@ -60,12 +60,12 @@ namespace xunit.runner.visualstudio.vs2010.installer
             if (changed)
                 x.Save(agentConfigFile);
         }
-        
+
         private static string tokenOf(string assemblyName)
         {
             return assemblyName.Substring(assemblyName.IndexOf("Token=") + 6);
         }
-        
+
         private static string cultureOf(string assemblyName)
         {
             var a = assemblyName.IndexOf("Culture=") + 8;
@@ -92,7 +92,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
                 .ToArray();
             return partials.Any(d => d.cbs.Any(c => c.GetAttribute("version") == asn.Version.ToString() && c.GetAttribute("href") == filepath));
         }
-        
+
         private static bool junkRemover(XmlDocument doc, AssemblyName asn, string ns, string prf, XmlNamespaceManager nsm)
         {
             var root = doc["configuration"];
@@ -111,7 +111,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
             foreach (var d in toremove2) foreach (var c in d.cbs) { anyr = true; d.dea.RemoveChild(c); }
             return anyr;
         }
-        
+
         private static bool exactWriter(XmlDocument doc, string filepath, AssemblyName asn, string ns, string prf, XmlNamespaceManager nsm)
         {
             bool chg = false;
@@ -173,6 +173,18 @@ namespace xunit.runner.visualstudio.vs2010.installer
                 if (part.dea.ChildNodes.Count == 1) { anything = true; part.dea.ParentNode.RemoveChild(part.dea); } // deass has assemblyidentity only?
             }
             return anything;
+        }
+    }
+
+    public class RegistryPatcher
+    {
+        public static bool CheckHklmTestTypesState()//string regroot)
+        {
+            return false;
+        }
+
+        public static void PerformHklmTestTypesPatches()
+        {
         }
     }
 }

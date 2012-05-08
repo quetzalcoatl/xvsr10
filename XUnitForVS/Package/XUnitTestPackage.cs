@@ -91,13 +91,46 @@ namespace Xunit.Runner.VisualStudio.VS2010
             agentx = MSVST2A_Access.QTAgentExecutableFilename;
 
             var assst = AssemblyInstaller.CheckInstalledAssemblies(vsPath, asms);
-            var cfgst = ExeConfigPatcher.CheckQTConfigState(vsPath, agentx, AssemblyInstaller.VSPrivateSubDir, asms);
+            var cfgst = ExeConfigPatcher.CheckExeConfigState(vsPath, agentx, AssemblyInstaller.VSPrivateSubDir, asms);
+            var regst = RegistryPatcher.CheckHklmTestTypesState();//this.UserRegistryRoot.Name);
 
-            if (assst.Values.Contains("missing") || assst.Any(asst => !cfgst[asst.Key].Value)) // ignore junk
+            //var ttic = Type.GetType("Microsoft.VisualStudio.TestTools.Common.TestTypeInfoCollection, Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+            //var ttic1 = Activator.CreateInstance(ttic);
+
+            ////var reg = Type.GetType("Microsoft.VisualStudio.TestTools.Common.RegistryConstants, Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+            ////var vsiphelper = Type.GetType("Microsoft.VisualStudio.TestTools.Vsip.ConfigurationHelper, Microsoft.VisualStudio.QualityTools.Vsip, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+
+            ////var apr1 = reg.GetProperty("ApplicationRoot", BindingFlags.Static | BindingFlags.Public).GetValue(null, null); // !Exp, -HK
+            ////var def1 = reg.GetProperty("DefaultRoot", BindingFlags.Static | BindingFlags.Public).GetValue(null, null); // !Exp, -HK
+
+            ////var ttic2 = Activator.CreateInstance(ttic);
+
+            ////vsiphelper.InvokeMember("SetRegistryRoot", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic, null, null, new object[] { this, false });
+
+            ////var apr2 = reg.GetProperty("ApplicationRoot", BindingFlags.Static | BindingFlags.Public).GetValue(null, null); // Exp, -HK
+            ////var def2 = reg.GetProperty("DefaultRoot", BindingFlags.Static | BindingFlags.Public).GetValue(null, null); // Exp, -HK
+
+            ////var ttic3 = Activator.CreateInstance(ttic);
+
+            //var testhelper = Type.GetType("Microsoft.VisualStudio.TestTools.Common.TestConfigHelper, Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+            //var helper = Activator.CreateInstance(testhelper, true);
+            //var defroot = testhelper.GetProperty("LocalMachineConfig", BindingFlags.Instance | BindingFlags.NonPublic);
+            //var tmp = defroot.GetValue(helper, null);
+
+            var k = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Default);
+            var l = k.OpenSubKey("Software\\Microsoft\\VisualStudio\\10.0\\EnterpriseTools\\QualityTools\\TestTypes");
+            var m = l.SubKeyCount;
+
+            //var ttic4 = Activator.CreateInstance(ttic);
+
+            if (assst.Values.Contains("missing")
+                || assst.Any(asst => !cfgst[asst.Key].Value) // ignore junk
+                || !regst
+                )
                 if (true == new Bounce { Topmost = true }.ShowDialog() && !Zombied)
                 {
                     tapAgentProcess();
-                    ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentx, refs, asms);
+                    ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, /*this.UserRegistryRoot.Name,*/ vsPath, agentx, refs, asms);
                 }
         }
 
