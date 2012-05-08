@@ -26,7 +26,7 @@ namespace Xunit.Runner.VisualStudio.VS2010
     [Guid(Guids.PackageKey_S)]
 
     // This attribute is used to register the informations needed to show the this package in the Help/About dialog of Visual Studio.
-    [InstalledProductRegistration("#101", "#102", "2.0", IconResourceID = 103)]
+    [InstalledProductRegistration("#101", "#102", "2.2", IconResourceID = 103)]
 
     [ProvideMenuResource("Menus.ctmenu", 1)] // This attribute is needed to let the shell know that this package exposes some menus.
 

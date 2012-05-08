@@ -3,7 +3,7 @@
   <Identifier Id="EC512710-795B-47E9-A0FF-050CF6E2EF0D">
     <Name>xUnit Test Runner for VisualStudio 2010</Name>
     <Author>quetzalcoatl</Author>
-    <Version>2.1</Version>
+    <Version>2.2</Version>
     <Description xml:space="preserve">Enables to run xUnit-based unit tests from within VisualStudio's builtin test runner.</Description>
     <Locale>1033</Locale>
     <InstalledByMsi>false</InstalledByMsi>
