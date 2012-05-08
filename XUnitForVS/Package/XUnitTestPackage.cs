@@ -79,12 +79,22 @@ namespace Xunit.Runner.VisualStudio.VS2010
         {
             base.Initialize();
 
-            ensureAssembliesInstalled();
+            uint cookie;
+            int active;
+            
+            IVsMonitorSelection monitorSelection = (IVsMonitorSelection)Package.GetGlobalService(typeof(SVsShellMonitorSelection));
+            monitorSelection.GetCmdUIContextCookie(Guid.Parse(UIContextGuids80.NoSolution), out cookie);
+            monitorSelection.IsCmdUIContextActive(cookie, out active);
+            
+            // if NOSOLUTION, then this package has been loaded as a sideeffect of a command being run!
+            // the only commands available at that point of time are: kill agent and show installation utility
+            // if any of those is pending, nothing should be shown!
+            ensureAssembliesInstalled(active != 0);
 
             buildUiCommands();
         }
 
-        private void ensureAssembliesInstalled()
+        private void ensureAssembliesInstalled(bool skipAutoPopup)
         {
             refs = typeof(XUnitTestPackage).Assembly;
             asms = Meta.RequiredAssemblies;
@@ -98,11 +108,14 @@ namespace Xunit.Runner.VisualStudio.VS2010
             var cfgmiss = assst.Any(asst => cfgsts.Any(cfgst => !cfgst[asst.Key].Value));
 
             if (assmiss || cfgmiss) // ignore junk
-                if (true == new Bounce { Topmost = true }.ShowDialog() && !Zombied)
-                {
-                    tapAgentProcess();
-                    ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentexes, refs, asms);
-                }
+                if (!skipAutoPopup)
+                    // TODO: however, if the 'ensure' is skipped and then a solution is loaded, we will miss the opportunity to show the window..
+                    // this package should then register as UIContext-listener and (...).
+                    if (true == new Bounce { Topmost = true }.ShowDialog() && !Zombied)
+                    {
+                        tapAgentProcess();
+                        ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentexes, refs, asms);
+                    }
         }
 
         private void buildUiCommands()
