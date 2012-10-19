@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 
 namespace xunit.runner.visualstudio.vs2010.autoinstaller
 {
-    public enum InstallState
+    public enum AssemblyInstallState
     {
         Unknown = 0,
 
@@ -18,7 +19,7 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
         Error,
     }
 
-    public enum InstallOption
+    public enum AssemblyInstallOption
     {
         Uninstalled,
         // GAC, - disabled. seems to cause more problems than gains
@@ -26,7 +27,9 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
         NoAction,
     }
 
-    public class AssemblyOptions : DependencyObject
+    public class AssemblyOptions : DependencyObject, 
+        IInstallOptionsRow<AssemblyInstallState, AssemblyInstallOption>, IInstallOptionsRow2<AssemblyInstallState, AssemblyInstallOption>,
+        IInstallOptionsRow<object, object>
     {
         public string AssemblyShortName { get { return (string)GetValue(AssemblyShortNameProperty); } set { SetValue(AssemblyShortNameProperty, value); } }
         public static readonly DependencyProperty AssemblyShortNameProperty = DependencyProperty.Register("AssemblyShortName", typeof(string), typeof(AssemblyOptions), new UIPropertyMetadata(""));
@@ -34,17 +37,17 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
         public string AssemblyVersion { get { return (string)GetValue(AssemblyVersionProperty); } set { SetValue(AssemblyVersionProperty, value); } }
         public static readonly DependencyProperty AssemblyVersionProperty = DependencyProperty.Register("AssemblyVersion", typeof(string), typeof(AssemblyOptions), new UIPropertyMetadata(""));
 
-        public InstallState CurrentState { get { return (InstallState)GetValue(CurrentStateProperty); } set { SetValue(CurrentStateProperty, value); } }
-        public static readonly DependencyProperty CurrentStateProperty = DependencyProperty.Register("CurrentState", typeof(InstallState), typeof(AssemblyOptions), new UIPropertyMetadata(InstallState.Unknown, oldStateChanged));
+        public AssemblyInstallState CurrentState { get { return (AssemblyInstallState)GetValue(CurrentStateProperty); } set { SetValue(CurrentStateProperty, value); } }
+        public static readonly DependencyProperty CurrentStateProperty = DependencyProperty.Register("CurrentState", typeof(AssemblyInstallState), typeof(AssemblyOptions), new UIPropertyMetadata(AssemblyInstallState.Unknown, oldStateChanged));
 
         public ImageSource CurrentStateMark { get { return (ImageSource)GetValue(CurrentStateMarkProperty); } set { SetValue(CurrentStateMarkProperty, value); } }
         public static readonly DependencyProperty CurrentStateMarkProperty = DependencyProperty.Register("CurrentStateMark", typeof(ImageSource), typeof(AssemblyOptions), new UIPropertyMetadata(null));
 
-        public IEnumerable<InstallOption> NextStates { get { return (IEnumerable<InstallOption>)GetValue(NextStatesProperty); } set { SetValue(NextStatesProperty, value); } }
-        public static readonly DependencyProperty NextStatesProperty = DependencyProperty.Register("NextStates", typeof(IEnumerable<InstallOption>), typeof(AssemblyOptions), new UIPropertyMetadata(new InstallOption[0]));
+        public IEnumerable<AssemblyInstallOption> NextStates { get { return (IEnumerable<AssemblyInstallOption>)GetValue(NextStatesProperty); } set { SetValue(NextStatesProperty, value); } }
+        public static readonly DependencyProperty NextStatesProperty = DependencyProperty.Register("NextStates", typeof(IEnumerable<AssemblyInstallOption>), typeof(AssemblyOptions), new UIPropertyMetadata(new AssemblyInstallOption[0]));
 
-        public InstallOption NewState { get { return (InstallOption)GetValue(NewStateProperty); } set { SetValue(NewStateProperty, value); } }
-        public static readonly DependencyProperty NewStateProperty = DependencyProperty.Register("NewState", typeof(InstallOption), typeof(AssemblyOptions), new UIPropertyMetadata(InstallOption.NoAction, newStateChanged));
+        public AssemblyInstallOption NewState { get { return (AssemblyInstallOption)GetValue(NewStateProperty); } set { SetValue(NewStateProperty, value); } }
+        public static readonly DependencyProperty NewStateProperty = DependencyProperty.Register("NewState", typeof(AssemblyInstallOption), typeof(AssemblyOptions), new UIPropertyMetadata(AssemblyInstallOption.NoAction, newStateChanged));
 
         public MainWindow main;
         public Assembly assembly;
@@ -54,11 +57,11 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             var self = d as AssemblyOptions;
             if (self == null) return;
 
-            var newState = (InstallState)e.NewValue;
-            if (self.NewState == InstallOption.NoAction)
+            var newState = (AssemblyInstallState)e.NewValue;
+            if (self.NewState == AssemblyInstallOption.NoAction)
                 self.CurrentStateMark = MainWindow.CurrentStateImg(self.CurrentState, self.main.imgs);
 
-            self.main.UpdateConfigMark(3, 0);
+            self.main.UpdateConfigActionsAfterAssemblyActionChange();
         }
 
         private static void newStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -66,13 +69,21 @@ namespace xunit.runner.visualstudio.vs2010.autoinstaller
             var self = d as AssemblyOptions;
             if (self == null) return;
 
-            var newState = (InstallOption)e.NewValue;
-            if (newState == InstallOption.NoAction)
+            var newState = (AssemblyInstallOption)e.NewValue;
+            if (newState == AssemblyInstallOption.NoAction)
                 self.CurrentStateMark = MainWindow.CurrentStateImg(self.CurrentState, self.main.imgs);
             else
                 self.CurrentStateMark = self.main.imgs[3];
 
-            self.main.UpdateConfigMark(3, 0);
+            self.main.UpdateConfigActionsAfterAssemblyActionChange();
         }
+
+        #region IInstallOptionsRow<object,object> Members
+
+        object IInstallOptionsRow<object, object>.CurrentState { get { return this.CurrentState; } }
+        object IInstallOptionsRow<object, object>.NewState { get { return this.NewState; } }
+        IEnumerable<object> IInstallOptionsRow<object, object>.NextStates { get { return this.NextStates.Cast<object>(); } }
+
+        #endregion
     }
 }

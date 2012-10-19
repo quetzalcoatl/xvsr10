@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -68,6 +69,52 @@ namespace Xunit.Runner.VisualStudio.VS2010
                     si2 = MSVST2A_Tunnels.CreateOutofprocStrategyImpl(tap, appm, 1) as MSVST2A_OutOfProcessStrategy;
 
                 return MSVST2A_Tunnels.OO_GetAgentProcessExeName(si2, pa, acv);
+            }
+        }
+
+        public static string[] QTAgentExecutableFilenames
+        {
+            get
+            {
+                // from note 003.1 + issue #0001
+                // the VS environment for 64bit actually uses QTAgent32 if the project is configured to target x86 platform.
+                // this means that it is not possible to rely upon the default values the VS env returns upon its launch,
+                // as the QTAgent selection is performed much later and depends on project-specific configuration.
+                // this means that ALL qtagentXYZ.exe.config files must be patched, not just the 'default' one.
+                // fortunatelly, the agent selectior's arguments are all enums
+
+
+                var pas = Enum.GetValues(typeof(ProcessorArchitecture));
+                var acvs = Enum.GetValues(MSVST2A_Tunnels.clrVersionType);
+                var ps = MSVST2A_Tunnels.strategyKind_OutOfProc;
+
+                var res = new List<string>();
+
+                foreach(ProcessorArchitecture pa in pas)
+                    foreach (MSVST2C_AssemblyClrVersion acv in acvs)
+                    {
+                        var appm = MSVST2A_Tunnels.CreateProxyManager(null, pa, acv, ps);
+
+                        var tap = MSVST2A_Tunnels.CreateTestAgentProxy(appm, 1, ps);
+                        var si = MSVST2A_Tunnels.TP_StrategyImpl(tap);
+
+                        var si2 = si as MSVST2A_OutOfProcessStrategy; // scam for the compiler
+                        if (!MSVST2A_Tunnels.strategyImplType.IsInstanceOfType(si)) // real type test
+                        {
+                            Trace.WriteLine(string.Format("TestAgentProxy has produced a non-OOPS value: {0} {1} -> {2}", pa, acv, si == null ? "(null)" : si.GetType().FullName));
+                            try { si2 = MSVST2A_Tunnels.CreateOutofprocStrategyImpl(tap, appm, 1) as MSVST2A_OutOfProcessStrategy; }
+                            catch (Exception ex) { Trace.WriteLine(string.Format("Creating OOPS manually has failed. {0} {1} -> {2}\n{3}", pa, acv, ex.Message, ex.StackTrace)); continue; }
+                        }
+
+                        string exename = null;
+                        try { exename = MSVST2A_Tunnels.OO_GetAgentProcessExeName(si2, pa, acv); }
+                        catch (Exception ex) { Trace.WriteLine(string.Format("OOPS failed to provide an agent name. {0} {1} -> {2}\n{3}", pa, acv, ex.Message, ex.StackTrace)); continue; }
+
+                        if (!string.IsNullOrWhiteSpace(exename) && !res.Contains(exename))
+                            res.Add(exename);
+                    }
+
+                return res.ToArray();
             }
         }
     }
