@@ -8,7 +8,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
 {
     public static class ExeConfigPatcher
     {
-        public static IDictionary<Assembly, KeyValuePair<bool, bool>> CheckQTConfigState(string devenvroot, string agentExecutable, string subpath, Assembly[] asms)
+        public static IDictionary<Assembly, KeyValuePair<bool, bool>> CheckQTConfigState(string devenvroot, string agentExecutable, string subpath, IEnumerable<Assembly> asms)
         {
             var agentConfigFile = Path.Combine(devenvroot, agentExecutable + ".config");
             string ns = "urn:schemas-microsoft-com:asm.v1";

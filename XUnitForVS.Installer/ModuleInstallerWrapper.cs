@@ -11,7 +11,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
 {
     public static class ModuleInstallerWrapper
     {
-        public static void RunInteractive(bool wait, string localRoot, string devenvdir, string agentExecutable, Assembly refs, params Assembly[] asms)
+        public static void RunInteractive(bool wait, string localRoot, string devenvdir, string[] agentExecutables, Assembly refs, Assembly[] asms)
         {
             // look for the utility under the user's extensions directory and tries to find the newest updater utility
             var toolPath = FindNewestVersion("xunit.runner.visualstudio.vs2010.autoinstaller.exe", localRoot + @"\Extensions");
@@ -23,7 +23,7 @@ namespace xunit.runner.visualstudio.vs2010.installer
 
             var args = new List<string>();
             args.Add(devenvdir);
-            args.Add(agentExecutable);
+            args.Add(string.Join(";", agentExecutables));
             args.Add(refs.Location);
             foreach (var asm in asms) args.Add(asm.Location);
 

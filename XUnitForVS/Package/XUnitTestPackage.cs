@@ -72,7 +72,8 @@ namespace Xunit.Runner.VisualStudio.VS2010
 
         private Assembly refs;
         private Assembly[] asms;
-        private string vsPath, agentx;
+        private string vsPath;
+        private string[] agentexes;
 
         protected override void Initialize()
         {
@@ -88,16 +89,19 @@ namespace Xunit.Runner.VisualStudio.VS2010
             refs = typeof(XUnitTestPackage).Assembly;
             asms = Meta.RequiredAssemblies;
             vsPath = MSVST2A_Access.VisualStudioIdePath;
-            agentx = MSVST2A_Access.QTAgentExecutableFilename;
+            agentexes = MSVST2A_Access.QTAgentExecutableFilenames;
 
             var assst = AssemblyInstaller.CheckInstalledAssemblies(vsPath, asms);
-            var cfgst = ExeConfigPatcher.CheckQTConfigState(vsPath, agentx, AssemblyInstaller.VSPrivateSubDir, asms);
+            var cfgsts = agentexes.Select(agentx => ExeConfigPatcher.CheckQTConfigState(vsPath, agentx, AssemblyInstaller.VSPrivateSubDir, asms));
 
-            if (assst.Values.Contains("missing") || assst.Any(asst => !cfgst[asst.Key].Value)) // ignore junk
+            var assmiss = assst.Values.Contains("missing");
+            var cfgmiss = assst.Any(asst => cfgsts.Any(cfgst => !cfgst[asst.Key].Value));
+
+            if (assmiss || cfgmiss) // ignore junk
                 if (true == new Bounce { Topmost = true }.ShowDialog() && !Zombied)
                 {
                     tapAgentProcess();
-                    ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentx, refs, asms);
+                    ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentexes, refs, asms);
                 }
         }
 
@@ -132,7 +136,7 @@ namespace Xunit.Runner.VisualStudio.VS2010
             if (Zombied) return;
 
             tapAgentProcess();
-            ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentx, refs, asms);
+            ModuleInstallerWrapper.RunInteractive(true, this.UserLocalDataPath, vsPath, agentexes, refs, asms);
         }
 
         //---------------------------------
@@ -146,8 +150,14 @@ namespace Xunit.Runner.VisualStudio.VS2010
 
         private void tapAgentProcess()
         {
-            var tmi = MSVST3M_Access.GetTmi(this);
-            MSVST3M_Access.ShutdownLocalAgent(tmi);
+            Microsoft.VisualStudio.TestTools.Common.ITmi tmi = null;
+            try { tmi = MSVST3M_Access.GetTmi(this); }
+            catch (Exception ex) { System.Windows.MessageBox.Show("Failed to fetch TMI instance.\n" + ex.Message + "\n" + ex.StackTrace); }
+
+            if (tmi == null) return;
+
+            try { MSVST3M_Access.ShutdownLocalAgent(tmi); }
+            catch (Exception ex) { System.Windows.MessageBox.Show("Failed to kill the agent.\n" + ex.Message + "\n" + ex.StackTrace); }
         }
 
         //---------------------------------
