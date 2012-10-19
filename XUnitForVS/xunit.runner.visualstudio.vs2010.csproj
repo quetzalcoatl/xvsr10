@@ -133,4 +133,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\VSSDK\Microsoft.VsSDK.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM $(SolutionDir)\PackageSigning\bin\Release\PackageDigitalSignature.exe $(TargetDir)\$(TargetName).vsix
+  </PostBuildEvent>
+  </PropertyGroup>
 </Project>
