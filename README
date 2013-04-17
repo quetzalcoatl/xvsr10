@@ -84,6 +84,23 @@ and install the correct patches using the utility that will show up.
 It should be as easy as clicking two buttons ('update' then 'close').
 
 
+BINARIES
+--------
+
+It seems that GitHub is going to remove the "Downloads" section.
+Currently, it is still active at
+
+    https://github.com/quetzalcoatl/xvsr10/downloads
+
+but I don't know how long will they survive there.
+
+According to  https://github.com/blog/1302-goodbye-uploads it seems
+that the 'Downloads' that the GitHub hosted are goind to evaporate.
+
+I'll try to setup some other place, but untill then, please use the
+old GitHub (now-hidden) download page.
+
+
 REQUIREMENTS:
 -------------
 
